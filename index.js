@@ -8,38 +8,29 @@ const invalidateCloudFront = ({
   secretAccessKey,
   region,
   dest
-}) =>
-  new Promise((resolve, reject) => {
-    console.log("Started invalidation of CloudFront...");
+}) => {
+  console.log("Started invalidation of CloudFront...");
 
-    const cloudFront = new AWS.CloudFront({
-      apiVersion: "2019-03-26",
-      accessKeyId,
-      secretAccessKey,
-      region
-    });
-
-    const params = {
-      DistributionId: distributionId,
-      InvalidationBatch: {
-        CallerReference: `${+new Date()}`,
-        Paths: {
-          Quantity: 1,
-          Items: ["/*"]
-        }
-      }
-    };
-
-    cloudFront.createInvalidation(params, (err, _) => {
-      if (err) {
-        console.log("Failed to invalidate CloudFront!");
-        reject(err);
-      } else {
-        console.log("Successful invalidation CloudFront!");
-        resolve();
-      }
-    });
+  const cloudFront = new AWS.CloudFront({
+    apiVersion: "2019-03-26",
+    accessKeyId,
+    secretAccessKey,
+    region
   });
+
+  const params = {
+    DistributionId: distributionId,
+    InvalidationBatch: {
+      CallerReference: `${+new Date()}`,
+      Paths: {
+        Quantity: 1,
+        Items: ["/" + dest]
+      }
+    }
+  };
+
+  return cloudFront.createInvalidation(params).promise();
+};
 
 const uploadS3 = ({
   accessKeyId,
@@ -48,33 +39,24 @@ const uploadS3 = ({
   file,
   bucket,
   dest
-}) =>
-  new Promise((resolve, reject) => {
-    console.log("Started upload to S3...");
-    const s3 = new AWS.S3({
-      apiVersion: "2006-03-01",
-      accessKeyId,
-      secretAccessKey,
-      region
-    });
-
-    const body = fs.readFileSync(file);
-    const params = {
-      Body: body,
-      Bucket: bucket,
-      Key: dest
-    };
-
-    s3.upload(params, (err, _) => {
-      if (err) {
-        console.log("Failed upload to bucket!");
-        reject(err);
-      } else {
-        console.log("Successful upload to bucket!");
-        resolve();
-      }
-    });
+}) => {
+  console.log("Started upload to S3...");
+  const s3 = new AWS.S3({
+    apiVersion: "2006-03-01",
+    accessKeyId,
+    secretAccessKey,
+    region
   });
+
+  const body = fs.readFileSync(file);
+  const params = {
+    Body: body,
+    Bucket: bucket,
+    Key: dest
+  };
+
+  return s3.upload(params).promise();
+};
 
 const performUpload = async ({ file, bucket, distributionId, ...rest }) => {
   try {
