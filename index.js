@@ -3,7 +3,7 @@ const fs = require("fs");
 const AWS = require("aws-sdk");
 
 try {
-  const src = core.getInput("SRC");
+  const file = core.getInput("FILE");
   const dest = core.getInput("DEST");
   const bucket = core.getInput("AWS_S3_BUCKET");
   const AWS_SECRET_KEY = core.getInput("AWS_SECRET_KEY");
@@ -11,7 +11,7 @@ try {
   const AWS_REGION = core.getInput("AWS_REGION");
 
   if (
-    !src ||
+    !file ||
     !dest ||
     !bucket ||
     !AWS_SECRET_KEY ||
@@ -28,8 +28,8 @@ try {
     region: AWS_REGION
   });
 
-  console.log("Reading file: " + src);
-  const body = fs.readdirSync(src);
+  console.log("Reading file: " + file);
+  const body = fs.readFileSync(file);
   const params = {
     Body: body,
     Bucket: bucket,

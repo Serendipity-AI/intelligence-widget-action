@@ -5,7 +5,7 @@ branding:
   icon: "check-square"
   color: "green"
 inputs:
-  SRC:
+  FILE:
     description: "Source of file to upload"
     default: ""
   DEST:
