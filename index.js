@@ -21,8 +21,6 @@ try {
     throw new Error("Not all inputs provided!");
   }
 
-  console.log(`Updating Bucket with file...`);
-
   const s3 = new AWS.S3({
     apiVersion: "2006-03-01",
     accessKeyId: AWS_SECRET_ID,
@@ -30,6 +28,7 @@ try {
     region: AWS_REGION
   });
 
+  console.log("Reading file: " + src);
   const body = fs.readFileSync(src);
   const params = {
     Body: body,
@@ -37,6 +36,7 @@ try {
     Key: dest
   };
 
+  console.log("Starting upload...");
   s3.upload(params, (err, _) => {
     if (err) {
       console.log(`Failed upload to bucket!`);
