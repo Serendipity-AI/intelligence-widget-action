@@ -29,7 +29,7 @@ try {
   });
 
   console.log("Reading file: " + src);
-  const body = fs.readFileSync(src);
+  const body = fs.readdirSync(src);
   const params = {
     Body: body,
     Bucket: bucket,
