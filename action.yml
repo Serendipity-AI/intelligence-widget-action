@@ -1,0 +1,28 @@
+name: "Intelligence Widget Action"
+description: "Update the intelligence widget"
+author: "Jacob Arvidsson"
+branding:
+  icon: "check-square"
+  color: "green"
+inputs:
+  SRC:
+    description: "Source of file to upload"
+    default: ""
+  DEST:
+    description: "Destination in the bucket"
+    default: ""
+  AWS_S3_BUCKET:
+    description: "Bucket to upload to"
+    default: ""
+  AWS_SECRET_KEY:
+    description: "AWS Secret Key"
+    default: ""
+  AWS_SECRET_ID:
+    description: "AWS Secret Key"
+    default: ""
+  AWS_REGION:
+    description: "AWS Region"
+    default: ""
+runs:
+  using: "node12"
+  main: "index.js"
