@@ -4,10 +4,9 @@ Github Action to Upload to S3 Bucket
 
 Uploads to S3 Bucket
 
-```
+```yaml
 name: Upload
-on:
-  push
+on: push
 jobs:
   upload:
     runs-on: ubuntu-latest
