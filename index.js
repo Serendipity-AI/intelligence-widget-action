@@ -76,52 +76,48 @@ const uploadS3 = ({
     });
   });
 
+const performUpload = async ({ file, bucket, distributionId, ...rest }) => {
+  await uploadS3({
+    file,
+    bucket,
+    ...rest
+  });
+  await invalidateCloudFront({
+    distributionId,
+    ...rest
+  });
+};
+
 try {
   const file = core.getInput("FILE");
   const dest = core.getInput("DEST");
   const bucket = core.getInput("AWS_S3_BUCKET");
-  const AWS_SECRET_KEY = core.getInput("AWS_SECRET_KEY");
-  const AWS_SECRET_ID = core.getInput("AWS_SECRET_ID");
-  const AWS_REGION = core.getInput("AWS_REGION");
+  const secretAccessKey = core.getInput("AWS_SECRET_KEY");
+  const accessKeyId = core.getInput("AWS_SECRET_ID");
+  const region = core.getInput("AWS_REGION");
   const distributionId = core.getInput("AWS_DISTRIBUTION_ID");
 
   if (
     !file ||
     !dest ||
     !bucket ||
-    !AWS_SECRET_KEY ||
-    !AWS_SECRET_ID ||
-    !AWS_REGION
+    !secretAccessKey ||
+    !accessKeyId ||
+    !region
   ) {
     throw new Error("Not all inputs provided!");
   }
-
-  (async () => {
-    try {
-      await uploadS3({
-        accessKeyId: AWS_SECRET_ID,
-        secretAccessKey: AWS_SECRET_KEY,
-        region: AWS_REGION,
-        file,
-        bucket,
-        dest
-      });
-
-      try {
-        await invalidateCloudFront({
-          distributionId,
-          dest,
-          accessKeyId: AWS_SECRET_ID,
-          secretAccessKey: AWS_SECRET_KEY,
-          region: AWS_REGION
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  })();
+  performUpload({
+    accessKeyId,
+    secretAccessKey,
+    region,
+    file,
+    bucket,
+    dest,
+    distributionId
+  })
+    .then(() => console.log("Done"))
+    .catch(err => core.setFailed(err.message));
 } catch (error) {
   core.setFailed(error.message);
 }
