@@ -9,7 +9,7 @@ const invalidateCloudFront = ({
   region,
   dest
 }) =>
-  new Promise((reject, resolve) => {
+  new Promise((resolve, reject) => {
     console.log("Started invalidation of CloudFront...");
 
     const cloudFront = new AWS.CloudFront({
@@ -50,7 +50,7 @@ const uploadS3 = ({
   bucket,
   dest
 }) =>
-  new Promise((reject, resolve) => {
+  new Promise((resolve, reject) => {
     console.log("Started upload to S3...");
     const s3 = new AWS.S3({
       apiVersion: "2006-03-01",
