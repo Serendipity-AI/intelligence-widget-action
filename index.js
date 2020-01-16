@@ -29,6 +29,7 @@ const invalidateCloudFront = ({
         }
       }
     };
+    console.log("Started invalidation of CloudFront 2...");
 
     cloudFront.createInvalidation(params, (err, _) => {
       if (err) {
@@ -77,15 +78,19 @@ const uploadS3 = ({
   });
 
 const performUpload = async ({ file, bucket, distributionId, ...rest }) => {
-  await uploadS3({
-    file,
-    bucket,
-    ...rest
-  });
-  await invalidateCloudFront({
-    distributionId,
-    ...rest
-  });
+  try {
+    await uploadS3({
+      file,
+      bucket,
+      ...rest
+    });
+    await invalidateCloudFront({
+      distributionId,
+      ...rest
+    });
+  } catch (err) {
+    throw err;
+  }
 };
 
 try {
