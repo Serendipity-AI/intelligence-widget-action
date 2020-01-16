@@ -30,7 +30,7 @@ try {
     region: AWS_REGION
   });
 
-  const body = fs.readFileSync(`./${src}`);
+  const body = fs.readFileSync(src);
   const params = {
     Body: body,
     Bucket: bucket,
@@ -42,7 +42,7 @@ try {
       console.log(`Failed upload to bucket!`);
       throw err;
     } else {
-      console.log(`Succesful upload to bucket!`);
+      console.log(`Successful upload to bucket!`);
     }
   });
 } catch (error) {

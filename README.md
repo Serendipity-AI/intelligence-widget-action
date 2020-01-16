@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Upload
-      - uses: serendipity-ai/intelligence-widget-action@master
+      - uses: serendipity-ai/github-actions-s3-upload@master
         with:
           SRC: "./dist"
           DEST: "./"
