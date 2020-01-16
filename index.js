@@ -79,11 +79,13 @@ const uploadS3 = ({
 
 const performUpload = async ({ file, bucket, distributionId, ...rest }) => {
   try {
+    console.log("Started stuff");
     await uploadS3({
       file,
       bucket,
       ...rest
     });
+    console.log("First await is done");
     await invalidateCloudFront({
       distributionId,
       ...rest
