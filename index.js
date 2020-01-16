@@ -2,7 +2,7 @@ const core = require("@actions/core");
 const fs = require("fs");
 const AWS = require("aws-sdk");
 
-const invalidateCloudFront = async ({
+const invalidateCloudFront = ({
   distributionId,
   accessKeyId,
   secretAccessKey,
@@ -41,7 +41,7 @@ const invalidateCloudFront = async ({
     });
   });
 
-const uploadS3 = async ({
+const uploadS3 = ({
   accessKeyId,
   secretAccessKey,
   region,
@@ -96,22 +96,24 @@ try {
     throw new Error("Not all inputs provided!");
   }
 
-  await uploadS3({
-    accessKeyId: AWS_SECRET_ID,
-    secretAccessKey: AWS_SECRET_KEY,
-    region: AWS_REGION,
-    file,
-    bucket,
-    dest
-  });
+  (async () => {
+    await uploadS3({
+      accessKeyId: AWS_SECRET_ID,
+      secretAccessKey: AWS_SECRET_KEY,
+      region: AWS_REGION,
+      file,
+      bucket,
+      dest
+    });
 
-  await invalidateCloudFront({
-    distributionId,
-    dest,
-    accessKeyId: AWS_SECRET_ID,
-    secretAccessKey: AWS_SECRET_KEY,
-    region: AWS_REGION
-  });
+    await invalidateCloudFront({
+      distributionId,
+      dest,
+      accessKeyId: AWS_SECRET_ID,
+      secretAccessKey: AWS_SECRET_KEY,
+      region: AWS_REGION
+    });
+  })();
 } catch (error) {
   core.setFailed(error.message);
 }
