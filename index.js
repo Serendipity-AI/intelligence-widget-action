@@ -22,14 +22,13 @@ const invalidateCloudFront = ({
     const params = {
       DistributionId: distributionId,
       InvalidationBatch: {
-        CallerReference: +new Date(),
+        CallerReference: `${+new Date()}`,
         Paths: {
           Quantity: 1,
           Items: [dest]
         }
       }
     };
-    console.log("Started invalidation of CloudFront 2...");
 
     cloudFront.createInvalidation(params, (err, _) => {
       if (err) {
@@ -79,13 +78,11 @@ const uploadS3 = ({
 
 const performUpload = async ({ file, bucket, distributionId, ...rest }) => {
   try {
-    console.log("Started stuff");
     await uploadS3({
       file,
       bucket,
       ...rest
     });
-    console.log("First await is done");
     await invalidateCloudFront({
       distributionId,
       ...rest
