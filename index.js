@@ -2,7 +2,7 @@ const core = require("@actions/core");
 const fs = require("fs");
 const AWS = require("aws-sdk");
 
-const invalidateCloudFront = ({
+const invalidateCloudFront = async ({
   distributionId,
   accessKeyId,
   secretAccessKey,
@@ -41,7 +41,7 @@ const invalidateCloudFront = ({
     });
   });
 
-const uploadS3 = ({
+const uploadS3 = async ({
   accessKeyId,
   secretAccessKey,
   region,
