@@ -9,7 +9,7 @@ const invalidateCloudFront = ({
   region,
   dest
 }) =>
-  new Promise((resolve, reject) => {
+  new Promise((reject, resolve) => {
     console.log("Started invalidation of CloudFront...");
 
     const cloudFront = new AWS.CloudFront({
