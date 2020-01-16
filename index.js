@@ -97,22 +97,30 @@ try {
   }
 
   (async () => {
-    await uploadS3({
-      accessKeyId: AWS_SECRET_ID,
-      secretAccessKey: AWS_SECRET_KEY,
-      region: AWS_REGION,
-      file,
-      bucket,
-      dest
-    });
+    try {
+      await uploadS3({
+        accessKeyId: AWS_SECRET_ID,
+        secretAccessKey: AWS_SECRET_KEY,
+        region: AWS_REGION,
+        file,
+        bucket,
+        dest
+      });
 
-    await invalidateCloudFront({
-      distributionId,
-      dest,
-      accessKeyId: AWS_SECRET_ID,
-      secretAccessKey: AWS_SECRET_KEY,
-      region: AWS_REGION
-    });
+      try {
+        await invalidateCloudFront({
+          distributionId,
+          dest,
+          accessKeyId: AWS_SECRET_ID,
+          secretAccessKey: AWS_SECRET_KEY,
+          region: AWS_REGION
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   })();
 } catch (error) {
   core.setFailed(error.message);
