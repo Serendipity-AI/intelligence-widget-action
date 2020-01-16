@@ -25,7 +25,7 @@ const invalidateCloudFront = ({
         CallerReference: `${+new Date()}`,
         Paths: {
           Quantity: 1,
-          Items: ["*"]
+          Items: ["/*"]
         }
       }
     };
