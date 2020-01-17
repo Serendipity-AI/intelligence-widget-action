@@ -1,5 +1,5 @@
-name: "Intelligence Widget Action"
-description: "Update the intelligence widget"
+name: "S3 Upload"
+description: "Uploads a file to S3 and invalidate CouldFront distribution."
 author: "Jacob Arvidsson"
 branding:
   icon: "check-square"
@@ -22,6 +22,9 @@ inputs:
     default: ""
   AWS_REGION:
     description: "AWS Region"
+    default: ""
+  AWS_DISTRIBUTION_ID:
+    description: "Distribution id to invalidate CloudFront"
     default: ""
 runs:
   using: "node12"

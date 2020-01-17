@@ -1,8 +1,6 @@
-# Intelligence Widget Action
+# S3 Upload / CloudFront invalidate
 
-Github Action to Upload to S3 Bucket
-
-Uploads to S3 Bucket
+Github Action to Upload to S3 Bucket and invalidate a CloudFront distribution
 
 ```yaml
 name: Upload
@@ -23,4 +21,5 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_SECRET_ID: ${{ secrets.AWS_SECRET_ID }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID}}
 ```

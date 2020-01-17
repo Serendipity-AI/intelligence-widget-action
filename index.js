@@ -2,73 +2,39 @@ const core = require("@actions/core");
 const fs = require("fs");
 const AWS = require("aws-sdk");
 
-const invalidateCloudFront = ({
-  distributionId,
-  accessKeyId,
-  secretAccessKey,
-  region,
-  dest
-}) => {
-  console.log("Started invalidation of CloudFront...");
-
-  const cloudFront = new AWS.CloudFront({
-    apiVersion: "2019-03-26",
-    accessKeyId,
-    secretAccessKey,
-    region
-  });
-
-  const params = {
-    DistributionId: distributionId,
-    InvalidationBatch: {
-      CallerReference: `${+new Date()}`,
-      Paths: {
-        Quantity: 1,
-        Items: ["/" + dest]
-      }
-    }
-  };
-
-  return cloudFront.createInvalidation(params).promise();
-};
-
-const uploadS3 = ({
-  accessKeyId,
-  secretAccessKey,
-  region,
-  file,
-  bucket,
-  dest
-}) => {
-  console.log("Started upload to S3...");
-  const s3 = new AWS.S3({
-    apiVersion: "2006-03-01",
-    accessKeyId,
-    secretAccessKey,
-    region
-  });
-
-  const body = fs.readFileSync(file);
-  const params = {
-    Body: body,
-    Bucket: bucket,
-    Key: dest
-  };
-
-  return s3.upload(params).promise();
-};
-
-const performUpload = async ({ file, bucket, distributionId, ...rest }) => {
+const upload = async ({ awsConfig, file, bucket, distributionId, dest }) => {
   try {
-    await uploadS3({
-      file,
-      bucket,
-      ...rest
+    const s3 = new AWS.S3({ apiVersion: "2006-03-01", ...awsConfig });
+    const cloudFront = new AWS.CloudFront({
+      apiVersion: "2019-03-26",
+      ...awsConfig
     });
-    await invalidateCloudFront({
-      distributionId,
-      ...rest
-    });
+    console.log("Uploading file to S3");
+    await s3
+      .upload({
+        Body: fs.readFileSync(file),
+        Bucket: bucket,
+        Key: dest
+      })
+      .promise();
+
+    if (!distributionId) {
+      return;
+    }
+
+    console.log("Invalidating CloudFront distribution");
+    await cloudFront
+      .createInvalidation({
+        DistributionId: distributionId,
+        InvalidationBatch: {
+          CallerReference: `${+new Date()}`,
+          Paths: {
+            Quantity: 1,
+            Items: ["/" + dest]
+          }
+        }
+      })
+      .promise();
   } catch (err) {
     throw err;
   }
@@ -93,16 +59,18 @@ try {
   ) {
     throw new Error("Not all inputs provided!");
   }
-  performUpload({
-    accessKeyId,
-    secretAccessKey,
-    region,
+  upload({
+    awsConfig: {
+      accessKeyId,
+      secretAccessKey,
+      region
+    },
     file,
     bucket,
     dest,
     distributionId
   })
-    .then(() => console.log("Done"))
+    .then(() => console.log("Successfully uploaded file"))
     .catch(err => core.setFailed(err.message));
 } catch (error) {
   core.setFailed(error.message);
