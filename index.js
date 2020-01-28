@@ -49,7 +49,7 @@ try {
   const accessKeyId = core.getInput("AWS_SECRET_ID");
   const region = core.getInput("AWS_REGION");
   const distributionId = core.getInput("AWS_DISTRIBUTION_ID");
-  const ContentType = core.getInput("CONTENT_TYPE")
+  const contentType = core.getInput("CONTENT_TYPE")
 
   if (
     !file ||
@@ -70,7 +70,7 @@ try {
     file,
     bucket,
     dest,
-    ContentType,
+    contentType,
     distributionId
   })
     .then(() => console.log("Successfully uploaded file"))
