@@ -26,6 +26,9 @@ inputs:
   AWS_DISTRIBUTION_ID:
     description: "Distribution id to invalidate CloudFront"
     default: ""
+  CONTENT_TYPE:
+    description: "Set content type for uplaoded file"
+    default: ""
 runs:
   using: "node12"
   main: "index.js"

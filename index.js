@@ -2,7 +2,7 @@ const core = require("@actions/core");
 const fs = require("fs");
 const AWS = require("aws-sdk");
 
-const upload = async ({ awsConfig, file, bucket, distributionId, dest }) => {
+const upload = async ({ awsConfig, file, bucket, contentType, distributionId, dest }) => {
   try {
     const s3 = new AWS.S3({ apiVersion: "2006-03-01", ...awsConfig });
     const cloudFront = new AWS.CloudFront({
@@ -14,7 +14,8 @@ const upload = async ({ awsConfig, file, bucket, distributionId, dest }) => {
       .upload({
         Body: fs.readFileSync(file),
         Bucket: bucket,
-        Key: dest
+        Key: dest,
+        ContentType: contentType
       })
       .promise();
 
@@ -48,6 +49,7 @@ try {
   const accessKeyId = core.getInput("AWS_SECRET_ID");
   const region = core.getInput("AWS_REGION");
   const distributionId = core.getInput("AWS_DISTRIBUTION_ID");
+  const contentType = core.getInput("CONTENT_TYPE")
 
   if (
     !file ||
@@ -68,6 +70,7 @@ try {
     file,
     bucket,
     dest,
+    contentType,
     distributionId
   })
     .then(() => console.log("Successfully uploaded file"))
