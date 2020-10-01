@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/Serendipity-AI/intelligence-widget-action#readme",
   "devDependencies": {
-    "@actions/core": "^1.2.1",
+    "@actions/core": "^1.2.6",
     "aws-sdk": "^2.604.0"
   }
 }
